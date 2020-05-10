@@ -13,13 +13,15 @@ using namespace std;
 class seakgExecSudokuKletka;
 class seakgExecSudokuOblast;
 class seakgExecSudoku;
+
 //----------------------------------------------------------------------------
+
 class seakgExecSudokuKletka
 {
 	public:
 		
 		int value;
-		vector<int> variants;
+		std::vector<int> variants;
 		vector<seakgExecSudokuOblast *> oblasty;
 		seakgExecSudoku *sudoku;
 		
@@ -28,27 +30,31 @@ class seakgExecSudokuKletka
 	private:
 	
 };
+
 //----------------------------------------------------------------------------
+
 class seakgExecSudokuOblast
 {
 	public:
 		
-		vector<seakgExecSudokuKletka *> kletki;
+		std::vector<seakgExecSudokuKletka *> kletki;
 		seakgExecSudoku *sudoku;
 		
 		bool findValue( int value );
 		int schValueVariants( int value , int &ind_kl);
 		
 };
+
 //----------------------------------------------------------------------------
+
 class seakgExecSudoku
 {
 	public:
 		seakgExecSudoku();
 		~seakgExecSudoku();
-		void setAlphabet( string Alphabet );
+		void setAlphabet( std::string Alphabet );
 		
-		void setPole( string pole );
+		void setPole( std::string pole );
 		void coutPole();
 		void coutPoleSimple();
 		void coutVariant();
@@ -69,10 +75,12 @@ class seakgExecSudoku
 		//std::string strSudoku, int i
 		int getCountVariants();
 	private:
-		vector<seakgExecSudokuKletka *> pole;
-		vector<seakgExecSudokuOblast *> oblasty;
+		std::vector<seakgExecSudokuKletka *> pole;
+		std::vector<seakgExecSudokuOblast *> oblasty;
 		
-		string alphabet;
+		std::string alphabet;
 };
+
 //----------------------------------------------------------------------------
+
 #endif // __SEAKGEXECSUDOKU_H__
