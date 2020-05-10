@@ -17,3 +17,14 @@ dependencies:
     url: "https://github.com/wsjcpp/wsjcpp-core:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_core"
+distribution:
+  - source-file: "src/seakgExecSudoku.cpp"
+    target-file: "seakgExecSudoku.cpp"
+    type: "source-code"
+  - source-file: "src/seakgExecSudoku.h"
+    target-file: "seakgExecSudoku.h"
+    type: "source-code"
+unit-tests:
+  cases:
+    - name: "Sudoku9x9"
+      description: "Check solving sudoku 9x9"

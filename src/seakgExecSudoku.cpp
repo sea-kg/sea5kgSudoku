@@ -1,43 +1,46 @@
 #include "seakgExecSudoku.h"
 
 //-----------------------------------------------------------------------------
-seakgExecSudoku::seakgExecSudoku()
-{
+
+seakgExecSudoku::seakgExecSudoku() {
 	pole.clear();
 	return;
 };
+
 //-----------------------------------------------------------------------------
-seakgExecSudoku::~seakgExecSudoku()
-{
+
+seakgExecSudoku::~seakgExecSudoku() {
 	this->clearAll();
 };
+
 //-----------------------------------------------------------------------------
-void seakgExecSudoku::setAlphabet( string Alphabet )
-{
-	alphabet = Alphabet;
+
+void seakgExecSudoku::setAlphabet(std::string sAlphabet) {
+	alphabet = sAlphabet;
 };
+
 //-----------------------------------------------------------------------------
-int seakgExecSudoku::getCharToIntAlphabet( char ch )
-{
-	for(unsigned int i = 0; i < alphabet.length(); i++)
-	{
+
+int seakgExecSudoku::getCharToIntAlphabet( char ch ) {
+	for (unsigned int i = 0; i < alphabet.length(); i++) {
 		if( ch == alphabet[i] ) return i;
 	}
 	return 0;
 };
+
 //-----------------------------------------------------------------------------
-char seakgExecSudoku::getIntToCharAlphabet( int i )
-{
+
+char seakgExecSudoku::getIntToCharAlphabet( int i ) {
 	i = i % alphabet.length();
 	return alphabet[i];
 };
+
 //-----------------------------------------------------------------------------
-void seakgExecSudoku::setPole( string Pole )
-{
+
+void seakgExecSudoku::setPole(std::string Pole) {
 	pole.clear();
 	
-	for(unsigned int i = 0; i < Pole.length(); i++)
-	{
+	for (unsigned int i = 0; i < Pole.length(); i++) {
 		int ch = getCharToIntAlphabet( Pole[i] );
 		seakgExecSudokuKletka *kl = new seakgExecSudokuKletka();
 		kl->value = ch;
@@ -46,77 +49,78 @@ void seakgExecSudoku::setPole( string Pole )
 	};
 	return;
 };
+
 //-----------------------------------------------------------------------------
-void seakgExecSudoku::coutPole()
-{
+
+void seakgExecSudoku::coutPole() {
 	int lenstr = sqrt( pole.size() );
 	
 	int sch = 1;
-	cout << "\n" << sch << ") ";
+	std::cout << "\n" << sch << ") ";
 	
 	for(unsigned int i = 0; i < pole.size(); i++ )
 	{
 		int value = pole[i]->value;
 		
-		cout << " | "<< getIntToCharAlphabet( value );
+		std::cout << " | "<< getIntToCharAlphabet( value );
 		if( (int)(i % lenstr) == ( lenstr - 1 ) ) 
 		{
-			cout << " |";
+			std::cout << " |";
 			sch++;
 			if( i != pole.size() - 1 )
-			cout << "\n" << sch << ") ";
+			std::cout << "\n" << sch << ") ";
 		}
 	};
-	cout << "\n\n";
+	std::cout << "\n\n";
 	return;
 };
+
 //-----------------------------------------------------------------------------
-void seakgExecSudoku::coutPoleSimple()
-{
-	for(unsigned int i = 0; i < pole.size(); i++ )
-	{
+
+void seakgExecSudoku::coutPoleSimple() {
+	for (unsigned int i = 0; i < pole.size(); i++) {
 		int value = pole[i]->value;
-		cout << getIntToCharAlphabet( value );
+		std::cout << getIntToCharAlphabet( value );
 	};
-	cout << "\n";
+	std::cout << "\n";
 	return;
 };
+
 //-----------------------------------------------------------------------------
-void seakgExecSudoku::clearAll()
-{
+
+void seakgExecSudoku::clearAll() {
 	//clear cells
-	for(unsigned int i = 0; i < pole.size(); i++ )
-	{
+	for (unsigned int i = 0; i < pole.size(); i++) {
 		pole[i]->variants.clear();
 		pole[i]->oblasty.clear();
 	};
 	pole.clear();
 	
 	//clear areas
-	for(unsigned int i = 0; i < oblasty.size(); i++ )
-	{
+	for (unsigned int i = 0; i < oblasty.size(); i++) {
 		oblasty[i]->kletki.clear();
 	};
 	oblasty.clear();
 };
+
 //-----------------------------------------------------------------------------
-void seakgExecSudoku::coutVariant()
-{
-	for( unsigned int i = 0; i < pole.size(); i++ )
-	{
+
+void seakgExecSudoku::coutVariant() {
+	for (unsigned int i = 0; i < pole.size(); i++) {
 		pole[i]->getVariants();
 		
-		cout << "Cell "<< i << ": \n";
-		cout << "\tthe number of cases = " << pole[i]->variants.size() << ";\n"; 
-		cout << "\tcases: ";
-		for(unsigned int t = 0; t < pole[i]->variants.size(); t++ )
-		{
-			cout << " " << pole[i]->variants[t] << ", ";
+		std::cout << "Cell "<< i << ": \n";
+		std::cout << "\tthe number of cases = " << pole[i]->variants.size() << ";\n"; 
+		std::cout << "\tcases: ";
+		for (unsigned int t = 0; t < pole[i]->variants.size(); t++) {
+			std::cout << " " << pole[i]->variants[t] << ", ";
 		};
-		cout << "\n\tNumber of areas which include cell: " << pole[i]->oblasty.size() << "\n"; 
+		std::cout << "\n\tNumber of areas which include cell: " << pole[i]->oblasty.size() << "\n"; 
 	};
 };
+
 //-----------------------------------------------------------------------------
+
 void seakgExecSudoku::addOblasty( int mas[], int count )
 {
 	seakgExecSudokuOblast * obl = new seakgExecSudokuOblast();

@@ -6,9 +6,8 @@
 #include <iostream>
 #include <math.h>
 
-//2011-04-22 sea-kg
-
-using namespace std;
+// 2011-04-22 sea-kg
+// 2020-05-10 sea-kg
 
 class seakgExecSudokuKletka;
 class seakgExecSudokuOblast;
@@ -22,7 +21,7 @@ class seakgExecSudokuKletka
 		
 		int value;
 		std::vector<int> variants;
-		vector<seakgExecSudokuOblast *> oblasty;
+		std::vector<seakgExecSudokuOblast *> oblasty;
 		seakgExecSudoku *sudoku;
 		
 		void getVariants();
