@@ -11,8 +11,8 @@ set(EXECUTABLE_OUTPUT_PATH ${SolvingSudoku_SOURCE_DIR})
 list (APPEND WSJCPP_INCLUDE_DIRS "src")
 
 list (APPEND WSJCPP_SOURCES "src/main.cpp")
-list (APPEND WSJCPP_SOURCES "src/seakgExecSudoku.h")
-list (APPEND WSJCPP_SOURCES "src/seakgExecSudoku.cpp")
+list (APPEND WSJCPP_SOURCES "src/sea5kgSudoku.h")
+list (APPEND WSJCPP_SOURCES "src/sea5kgSudoku.cpp")
 
 #### BEGIN_WSJCPP_APPEND
 #### END_WSJCPP_APPEND

@@ -1,6 +1,8 @@
 .wsjcpp/*
 SolvingSudoku
 tmp/*
+.logs/*
+.vscode/*
 
 # Compiled Object files
 *.slo
