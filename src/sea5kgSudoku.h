@@ -7,53 +7,41 @@
 // 2011-04-22 sea-kg
 // 2020-05-10 sea-kg
 
-
-class sea5kgSudokuRegion;
-
 //----------------------------------------------------------------------------
 
-class sea5kgSudokuCell
-{
+class sea5kgSudokuCell {
     public:
         sea5kgSudokuCell(int nPosX, int nPosY, char cValue);
         void setValue(char cValue);
         char getValue();
         const std::vector<char> &getPossibleValues();
         void clear();
-
-        std::vector<sea5kgSudokuRegion *> oblasty;
-        
-        void updatePossibleValues(const std::string &sAlphabet);
+        void setPossibleValues(const std::string &sAlphabet);
+        void excludeValue(char cValue);
         bool trueVariant( int true_value );
+
     private:
         int m_nPosX;
         int m_nPosY;
         char m_cValue;
         std::vector<char> m_vPossibleValues;
-    
 };
 
 //----------------------------------------------------------------------------
 
-class sea5kgSudoku;
-
-//----------------------------------------------------------------------------
-
-class sea5kgSudokuRegion
-{
+class sea5kgSudokuRegion {
     public:
-        sea5kgSudokuRegion();
-        sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vCells);
+        sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vRegionCells);
+        const std::vector<std::pair<int,int>> &getRegionCells();
 
         std::vector<sea5kgSudokuCell *> kletki;
         
-        sea5kgSudoku *sudoku;
-        
         bool findValue(char value);
         int schValueVariants( int value , int &ind_kl);
+        bool has(int x, int y);
 
     private:
-        std::vector<std::pair<int,int>> m_vCells;
+        std::vector<std::pair<int,int>> m_vRegionCells;
 };
 
 //----------------------------------------------------------------------------
@@ -65,7 +53,7 @@ class sea5kgSudoku
         ~sea5kgSudoku();
         void setData(const std::string &sPole);
 
-        void printData();
+        std::string printData();
         void coutPoleSimple();
         void coutVariant();
         void clearAll();
@@ -89,8 +77,11 @@ class sea5kgSudoku
 
         std::vector<sea5kgSudokuCell *> m_vCells;
         std::vector<sea5kgSudokuRegion> m_vRegions;
-        
+        void updatePossibleValues(int x, int y);
+        void findRegions(int x, int y, std::vector<sea5kgSudokuRegion> &foundRegions);
+
         std::string m_sAlphabet;
+        int m_nLen;
 };
 
 //----------------------------------------------------------------------------

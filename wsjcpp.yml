@@ -6,11 +6,14 @@ description: "SolvingSudoku"
 authors:
   - name: "Evgenii Sopov"
     email: "mrseakg@gmail.com"
+
 origins:
   - address: "https://sea-kg.com/wsjcpp-package-registry/"
     type: "package-registry"
+
 keywords:
   - "c++"
+
 dependencies:
   - name: "wsjcpp-core"
     version: "v0.1.5"
@@ -24,6 +27,7 @@ distribution:
   - source-file: "src/seakgExecSudoku.h"
     target-file: "seakgExecSudoku.h"
     type: "source-code"
+
 unit-tests:
   cases:
     - name: "Sudoku9x9"

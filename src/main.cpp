@@ -32,17 +32,18 @@ int main(int argc, const char* argv[]) {
     
     sea5kgSudoku sudoku("123456789");
     sudoku.setData( pole );
-    sudoku.printData();
+    
+    std::cout << "Source data: " << std::endl << sudoku.printData() << std::endl;
     sudoku.applyClassicRegionsFor9x9();
     
     //while fulfilling performed
-    while (sudoku.step() == true) {
+    // sudoku.step();
+    while (sudoku.step()) {
         // nothing
     };
     
     //decision may be incomplete (!)
-    std::cout << "Solution:";
-    sudoku.printData();
+    std::cout << "Solution:" << std::endl << sudoku.printData() << std::endl;
     
     std::cout << pole << "\n";
     sudoku.coutPoleSimple();

@@ -1,6 +1,7 @@
 #include "sea5kgSudoku.h"
 #include <wsjcpp_core.h>
 #include <math.h>
+#include <algorithm>
 
 //----------------------------------------------------------------------------
 // sea5kgSudokuCell
@@ -37,23 +38,22 @@ void sea5kgSudokuCell::clear() {
 
 //----------------------------------------------------------------------------
 
-void sea5kgSudokuCell::updatePossibleValues(const std::string &sAlphabet) {
-    // update variants
-
+void sea5kgSudokuCell::setPossibleValues(const std::string &sAlphabet) {
     m_vPossibleValues.clear();
+    for (int i = 0; i < sAlphabet.length(); i++) {
+        m_vPossibleValues.push_back(sAlphabet[i]);
+    }
+}
 
-    if (m_cValue != '-') return;
-    int max = sAlphabet.length() + 1;
-    for( int value1 = 1; value1 < max ; value1++) {
-        int sch = 0;
-        for( unsigned int i = 0; i < oblasty.size(); i++) {
-            if( oblasty[i]->findValue( value1 ) == true ) {
-                sch++;
-            };
-        };
-        if( sch == 0 ) m_vPossibleValues.push_back( value1 );
-    };
-};
+//----------------------------------------------------------------------------
+
+void sea5kgSudokuCell::excludeValue(char cValue) {
+    std::vector<char>::iterator it;
+    it = std::find(m_vPossibleValues.begin(), m_vPossibleValues.end(), cValue);
+    if (it != m_vPossibleValues.end()) {
+        m_vPossibleValues.erase(it);
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -78,12 +78,14 @@ bool sea5kgSudokuCell::trueVariant( int true_value ) {
 //----------------------------------------------------------------------------
 // sea5kgSudokuRegion
 
-sea5kgSudokuRegion::sea5kgSudokuRegion() {
-    // TODO remove
+sea5kgSudokuRegion::sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vRegionCells) {
+    m_vRegionCells = vRegionCells;
 }
 
-sea5kgSudokuRegion::sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vCells) {
-    m_vCells = vCells;
+//----------------------------------------------------------------------------
+
+const std::vector<std::pair<int,int>> &sea5kgSudokuRegion::getRegionCells() {
+    return m_vRegionCells;
 }
 
 //----------------------------------------------------------------------------
@@ -99,6 +101,17 @@ bool sea5kgSudokuRegion::findValue(char cValue) {
 
 //----------------------------------------------------------------------------
 
+bool sea5kgSudokuRegion::has(int x, int y) {
+    for (int i = 0; i < m_vRegionCells.size(); i++) {
+        if (m_vRegionCells[i].first == x && m_vRegionCells[i].second == y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//----------------------------------------------------------------------------
+
 int sea5kgSudokuRegion::schValueVariants( int value , int &ind_kl)
 {
     int sch = 0;
@@ -108,13 +121,11 @@ int sea5kgSudokuRegion::schValueVariants( int value , int &ind_kl)
         {
             sch++; 
             sea5kgSudokuCell * kl = kletki[i];
-            ind_kl = sudoku->findKletka(kl); 
+            // ind_kl = sudoku->findKletka(kl); 
         };
     };
     return sch;
 };
-
-//----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // sea5kgSudoku
@@ -147,10 +158,10 @@ sea5kgSudoku::sea5kgSudoku(const std::string &sAlphabet) {
     }  
 
     m_sAlphabet = sAlphabet;
-    int nLenCells = nLength * nLength;
+    m_nLen = m_sAlphabet.length();
 
-    for (int x = 0; x < nLength; x++) {
-        for (int y = 0; y < nLength; y++) {
+    for (int x = 0; x < m_nLen; x++) {
+        for (int y = 0; y < m_nLen; y++) {
             m_vCells.push_back(new sea5kgSudokuCell(x,y,'-'));
         }
     };
@@ -168,7 +179,7 @@ sea5kgSudoku::~sea5kgSudoku() {
 
 int sea5kgSudoku::getCharToIntAlphabet( char ch ) {
     for (unsigned int i = 0; i < m_sAlphabet.length(); i++) {
-        if( ch == m_sAlphabet[i] ) return i;
+        if (ch == m_sAlphabet[i]) return i;
     }
     return 0;
 };
@@ -199,19 +210,26 @@ void sea5kgSudoku::setData(const std::string &sPole) {
 
 //-----------------------------------------------------------------------------
 
-void sea5kgSudoku::printData() {
+std::string sea5kgSudoku::printData() {
     int sch = 1;
-    int nLength = m_sAlphabet.length();
+    std::string sData = " +";
+    for (int i = 0; i < m_nLen; i++) {
+        sData += "---+";
+    }
     for (unsigned int i = 0; i < m_vCells.size(); i++) {
         char cValue = m_vCells[i]->getValue();
-        if (i % nLength == 0)  {
-            std::cout << "\n" << sch << ") | ";
+        if (i % m_nLen == 0)  {
+            sData += "\n | ";
             sch++;
         }
-        std::cout << cValue << " | ";
+        sData += cValue;
+        sData += " | ";
     };
-    std::cout << "\n\n";
-    return;
+    sData += "\n +";
+    for (int i = 0; i < m_nLen; i++) {
+        sData += "---+";
+    }
+    return sData;
 };
 
 //-----------------------------------------------------------------------------
@@ -230,7 +248,6 @@ void sea5kgSudoku::clearAll() {
     //clear cells
     for (unsigned int i = 0; i < m_vCells.size(); i++) {
         m_vCells[i]->clear();
-        m_vCells[i]->oblasty.clear();
     };
     m_vCells.clear();
     m_vRegions.clear();
@@ -240,7 +257,7 @@ void sea5kgSudoku::clearAll() {
 
 void sea5kgSudoku::coutVariant() {
     for (unsigned int i = 0; i < m_vCells.size(); i++) {
-        m_vCells[i]->updatePossibleValues(m_sAlphabet);
+        // m_vCells[i]->updatePossibleValues(m_sAlphabet);
         
         std::vector<char> vPossibleValues = m_vCells[i]->getPossibleValues();
 
@@ -250,7 +267,7 @@ void sea5kgSudoku::coutVariant() {
         for (unsigned int t = 0; t < vPossibleValues.size(); t++) {
             std::cout << " " << vPossibleValues[t] << ", ";
         };
-        std::cout << "\n\tNumber of areas which include cell: " << m_vCells[i]->oblasty.size() << "\n"; 
+        // std::cout << "\n\tNumber of areas which include cell: " << m_vCells[i]->oblasty.size() << "\n"; 
     };
 };
 
@@ -267,31 +284,56 @@ int sea5kgSudoku::findKletka( sea5kgSudokuCell * kl ) {
 
 //-----------------------------------------------------------------------------
 
-bool sea5kgSudoku::step() {
-    for( unsigned int i = 0; i < m_vCells.size(); i++ ) {
-        if (m_vCells[i]->getValue() != '-') {
-            // TODO check the Region and apply variants
-            m_vCells[i]->updatePossibleValues(m_sAlphabet);
+void sea5kgSudoku::updatePossibleValues(int x, int y) {
+    int i = x + y * m_nLen;
+    sea5kgSudokuCell *pCell = m_vCells[i];
+    std::vector<sea5kgSudokuRegion> vFoundRegions;
+    findRegions(x, y, vFoundRegions);
+    pCell->setPossibleValues(m_sAlphabet);
+    for (int i = 0; i < vFoundRegions.size(); i++) {
+        sea5kgSudokuRegion region = vFoundRegions[i];
+        for (int r = 0; r < region.getRegionCells().size(); r++) {
+            std::pair<int,int> p = region.getRegionCells()[r];
+            char c = m_vCells[p.first + p.second * m_nLen]->getValue();
+            pCell->excludeValue(c);
         }
     }
-    
-    for (unsigned int i = 0; i < m_vRegions.size(); i++) {
-        int max = this->m_sAlphabet.length() + 1;
-        for( int x = 1; x < max; x++ )
-        {
-            int ind_kl = -1;
-            int sch = m_vRegions[i].schValueVariants( x, ind_kl );
-            
-            if( sch == 1 )
-            {
-                m_vCells[ind_kl]->setValue(x);
-                //cout << "kletka " << ind_kl << " set new value " << x << "; \n";
-                return true;
-            };
-        };
-        
-    };
-    return false;
+}
+
+//-----------------------------------------------------------------------------
+
+void sea5kgSudoku::findRegions(int x, int y, std::vector<sea5kgSudokuRegion> &foundRegions) {
+    foundRegions.clear();
+    for (int i = 0; i < m_vRegions.size(); i++) {
+        sea5kgSudokuRegion region = m_vRegions[i];
+        if (region.has(x,y)) {
+            foundRegions.push_back(region);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+bool sea5kgSudoku::step() {
+    for (int x = 0; x < m_nLen; x++) {
+        for (int y = 0; y < m_nLen; y++) {
+            updatePossibleValues(x, y);
+        }
+    }
+    int nSet = 0;
+    for (int x = 0; x < m_nLen; x++) {
+        for (int y = 0; y < m_nLen; y++) {
+            int i = x + y * m_nLen;
+            if (m_vCells[i]->getValue() == '-') {
+                if (m_vCells[i]->getPossibleValues().size() == 1) {
+                    m_vCells[i]->setValue(m_vCells[i]->getPossibleValues()[0]);
+                    std::cout << m_vCells[i]->getPossibleValues()[0] << std::endl;
+                    nSet++;
+                }
+            }
+        }
+    }
+    return nSet > 0;
 };
 
 //----------------------------------------------------------------------------
@@ -332,6 +374,7 @@ void sea5kgSudoku::applyClassicRegionsFor9x9() {
             vCells.push_back(std::pair<int,int>(x0,y0+2));
             vCells.push_back(std::pair<int,int>(x0+1,y0+2));
             vCells.push_back(std::pair<int,int>(x0+2,y0+2));
+            m_vRegions.push_back(sea5kgSudokuRegion(vCells));
         }
     }
 }
