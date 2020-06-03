@@ -38,16 +38,26 @@ int main(int argc, const char* argv[]) {
     
     //while fulfilling performed
     // sudoku.step();
+    int nStep = 0;
     while (sudoku.step()) {
         // nothing
+        std::cout << "Step " << nStep << ":";
+        nStep++;
+        sudoku.coutPoleSimple();
     };
+
+    sudoku.step();
+    sudoku.coutPoleSimple();
     
     //decision may be incomplete (!)
     std::cout << "Solution:" << std::endl << sudoku.printData() << std::endl;
     
     std::cout << pole << "\n";
     sudoku.coutPoleSimple();
-
+    std::cout
+        << "Expected" << std::endl
+        << "947685132286431957153279486634758291891342675572196348719824563428563719365917824" << std::endl
+    ;
     std::cout << "\n";
     return 0;
 }

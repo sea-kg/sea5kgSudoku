@@ -17,8 +17,7 @@ class sea5kgSudokuCell {
         const std::vector<char> &getPossibleValues();
         void clear();
         void setPossibleValues(const std::string &sAlphabet);
-        void excludeValue(char cValue);
-        bool trueVariant( int true_value );
+        void excludePossibleValue(char cValue);
 
     private:
         int m_nPosX;
@@ -32,7 +31,7 @@ class sea5kgSudokuCell {
 class sea5kgSudokuRegion {
     public:
         sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vRegionCells);
-        const std::vector<std::pair<int,int>> &getRegionCells();
+        const std::vector<std::pair<int,int>> &getRegionCells() const;
         bool has(int x, int y);
 
     private:
@@ -55,15 +54,8 @@ class sea5kgSudoku
         
         void applyClassicRegionsFor6x6();
         void applyClassicRegionsFor9x9();
-        
-        int getCharToIntAlphabet( char ch );
-        char getIntToCharAlphabet( int i );
-        
-        int findKletka( sea5kgSudokuCell * kl );
-        
+
         bool step();
-        //std::string strSudoku, int i
-        int getCountVariants();
 
     private:
         std::string TAG;
@@ -72,9 +64,9 @@ class sea5kgSudoku
 
         std::vector<sea5kgSudokuCell *> m_vCells;
         std::vector<sea5kgSudokuRegion> m_vRegions;
-        void updatePossibleValues(int x, int y);
+        void updatePossibleValues();
         void findRegions(int x, int y, std::vector<sea5kgSudokuRegion> &foundRegions);
-
+        bool isPossibleValueOnlyOnce(char cValue, const sea5kgSudokuRegion &region);
         std::string m_sAlphabet;
         int m_nLen;
 };
