@@ -90,17 +90,6 @@ const std::vector<std::pair<int,int>> &sea5kgSudokuRegion::getRegionCells() {
 
 //----------------------------------------------------------------------------
 
-bool sea5kgSudokuRegion::findValue(char cValue) {
-    for (unsigned int i = 0; i < kletki.size(); i++) {
-        if (kletki[i]->getValue() == cValue) {
-            return true; 
-        };
-    };
-    return false;
-};
-
-//----------------------------------------------------------------------------
-
 bool sea5kgSudokuRegion::has(int x, int y) {
     for (int i = 0; i < m_vRegionCells.size(); i++) {
         if (m_vRegionCells[i].first == x && m_vRegionCells[i].second == y) {
@@ -109,23 +98,6 @@ bool sea5kgSudokuRegion::has(int x, int y) {
     }
     return false;
 }
-
-//----------------------------------------------------------------------------
-
-int sea5kgSudokuRegion::schValueVariants( int value , int &ind_kl)
-{
-    int sch = 0;
-    for( unsigned int i = 0; i < kletki.size(); i++)
-    {
-        if( kletki[i]->trueVariant( value ) == true )
-        {
-            sch++; 
-            sea5kgSudokuCell * kl = kletki[i];
-            // ind_kl = sudoku->findKletka(kl); 
-        };
-    };
-    return sch;
-};
 
 // -----------------------------------------------------------------------------
 // sea5kgSudoku

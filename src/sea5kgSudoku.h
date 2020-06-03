@@ -33,11 +33,6 @@ class sea5kgSudokuRegion {
     public:
         sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vRegionCells);
         const std::vector<std::pair<int,int>> &getRegionCells();
-
-        std::vector<sea5kgSudokuCell *> kletki;
-        
-        bool findValue(char value);
-        int schValueVariants( int value , int &ind_kl);
         bool has(int x, int y);
 
     private:
