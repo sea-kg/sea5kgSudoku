@@ -16,7 +16,6 @@ sea5kgSudokuCell::sea5kgSudokuCell(int nPosX, int nPosY, char cValue) {
 
 void sea5kgSudokuCell::setValue(char cValue) {
     m_cValue = cValue;
-    m_vPossibleValues.clear();
 }
 
 //----------------------------------------------------------------------------
