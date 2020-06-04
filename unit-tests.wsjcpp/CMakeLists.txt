@@ -31,13 +31,15 @@ list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_core/wsjcpp_resources_manager.
 
 # SolvingSudoku:v0.0.1
 list (APPEND WSJCPP_INCLUDE_DIRS "../src")
-list (APPEND WSJCPP_SOURCES "../src/seakgExecSudoku.cpp")
-list (APPEND WSJCPP_SOURCES "../src/seakgExecSudoku.h")
+list (APPEND WSJCPP_SOURCES "../src/sea5kgSudoku.cpp")
+list (APPEND WSJCPP_SOURCES "../src/sea5kgSudoku.h")
 
 # unit-tests
 list (APPEND WSJCPP_INCLUDE_DIRS "src")
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_sudoku9x9.h")
 list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_sudoku9x9.cpp")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_regions9x9.h")
+list (APPEND WSJCPP_SOURCES "../unit-tests.wsjcpp/src/unit_test_regions9x9.cpp")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.user-custom.txt)
 

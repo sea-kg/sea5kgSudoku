@@ -32,6 +32,8 @@ class sea5kgSudokuRegion {
     public:
         sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vRegionCells);
         const std::vector<std::pair<int,int>> &getRegionCells() const;
+        std::pair<int,int> getMin() const;
+        std::pair<int,int> getMax() const;
         bool has(int x, int y);
 
     private:
@@ -48,12 +50,13 @@ class sea5kgSudoku
         void setData(const std::string &sPole);
 
         std::string printData();
-        void coutPoleSimple();
+        std::string getOnelineData();
         void coutVariant();
         void clearAll();
         
         void applyClassicRegionsFor6x6();
         void applyClassicRegionsFor9x9();
+        const std::vector<sea5kgSudokuRegion> &getRegions() const;
 
         bool step();
 

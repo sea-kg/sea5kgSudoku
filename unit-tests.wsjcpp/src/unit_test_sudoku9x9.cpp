@@ -1,6 +1,7 @@
 #include "unit_test_sudoku9x9.h"
 #include <vector>
 #include <wsjcpp_core.h>
+#include <sea5kgSudoku.h>
 
 REGISTRY_WSJCPP_UNIT_TEST(UnitTestSudoku9x9)
 
@@ -18,15 +19,14 @@ void UnitTestSudoku9x9::init() {
 
 bool UnitTestSudoku9x9::run() {
     bool bTestSuccess = true;
-    compareB(bTestSuccess, "Not implemented", true, false);
 
     struct LTest {
-        LTest(std::string sSrc, std::string sOut) {
+        LTest(std::string sSrc, std::string sExpected) {
             this->sSrc = sSrc;
-            this->sOut = sOut;
+            this->sExpected = sExpected;
         }
         std::string sSrc;
-        std::string sOut;
+        std::string sExpected;
     };
 
     std::vector<LTest> tests;
@@ -49,21 +49,23 @@ bool UnitTestSudoku9x9::run() {
         "975632148812475963346891527658143279237589614491267385184956732523718496769324851"
     ));
 
-    seakgExecSudoku *sudoku = new seakgExecSudoku();
+    sea5kgSudoku sudoku("123456789");
     for (int i = 0; i < tests.size(); i++) {
         LTest test = tests[i];
-        
-        sudoku->clearAll();
-        sudoku->setAlphabet("-123456789");
-        sudoku->setPole(test.sSrc);
-        sudoku->coutPole();
-        sudoku->setOblasty9x9();
+        sudoku.clearAll();
+        sudoku.setData(test.sSrc);
+        // sudoku->coutPole();
+        sudoku.applyClassicRegionsFor9x9();
 
         // while fulfilling performed
-        while (sudoku->shag() == true) {
+        while (sudoku.step()) {
             // nothing
         };
 
+        compareS(bTestSuccess, "Test " + std::to_string(i), sudoku.getOnelineData(), test.sExpected);
+
+
+        
         // sudoku->
     }
     

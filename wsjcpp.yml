@@ -21,14 +21,16 @@ dependencies:
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_core"
 distribution:
-  - source-file: "src/seakgExecSudoku.cpp"
-    target-file: "seakgExecSudoku.cpp"
+  - source-file: "src/sea5kgSudoku.cpp"
+    target-file: "sea5kgSudoku.cpp"
     type: "source-code"
-  - source-file: "src/seakgExecSudoku.h"
-    target-file: "seakgExecSudoku.h"
+  - source-file: "src/sea5kgSudoku.h"
+    target-file: "sea5kgSudoku.h"
     type: "source-code"
 
 unit-tests:
   cases:
     - name: "Sudoku9x9"
       description: "Check solving sudoku 9x9"
+    - name: "Regions9x9"
+      description: "Test regions 9x9"

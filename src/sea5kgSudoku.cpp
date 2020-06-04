@@ -34,6 +34,7 @@ const std::vector<char> &sea5kgSudokuCell::getPossibleValues() {
 
 void sea5kgSudokuCell::clear() {
     m_vPossibleValues.clear();
+    m_cValue = '-';
 }
 
 //----------------------------------------------------------------------------
@@ -66,6 +67,30 @@ sea5kgSudokuRegion::sea5kgSudokuRegion(std::vector<std::pair<int,int>> &vRegionC
 
 const std::vector<std::pair<int,int>> &sea5kgSudokuRegion::getRegionCells() const {
     return m_vRegionCells;
+}
+
+//----------------------------------------------------------------------------
+
+std::pair<int,int> sea5kgSudokuRegion::getMin() const {
+    std::pair<int,int> ret = m_vRegionCells[0];
+    for (int i = 0; i < m_vRegionCells.size(); i++) {
+        if (m_vRegionCells[i].first < ret.first || m_vRegionCells[i].second < ret.second) {
+            ret = m_vRegionCells[i];
+        }
+    }
+    return ret;
+}
+
+//----------------------------------------------------------------------------
+
+std::pair<int,int> sea5kgSudokuRegion::getMax() const {
+    std::pair<int,int> ret = m_vRegionCells[0];
+    for (int i = 0; i < m_vRegionCells.size(); i++) {
+        if (m_vRegionCells[i].first > ret.first || m_vRegionCells[i].second > ret.second) {
+            ret = m_vRegionCells[i];
+        }
+    }
+    return ret;
 }
 
 //----------------------------------------------------------------------------
@@ -170,13 +195,13 @@ std::string sea5kgSudoku::printData() {
 
 //-----------------------------------------------------------------------------
 
-void sea5kgSudoku::coutPoleSimple() {
+std::string sea5kgSudoku::getOnelineData() {
+    std::string sRet = "";
     for (unsigned int i = 0; i < m_vCells.size(); i++) {
-        std::cout << m_vCells[i]->getValue();
+        sRet += m_vCells[i]->getValue();
     };
-    std::cout << "\n";
-    return;
-};
+    return sRet;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -185,7 +210,6 @@ void sea5kgSudoku::clearAll() {
     for (unsigned int i = 0; i < m_vCells.size(); i++) {
         m_vCells[i]->clear();
     };
-    m_vCells.clear();
     m_vRegions.clear();
 };
 
@@ -264,13 +288,12 @@ bool sea5kgSudoku::step() {
 
                     for (int p = 0; p < vPossibleValues.size(); p++) {
                         char cValue = vPossibleValues[p];
-                        if (x >= 0 && x < 3 && y >= 0 && y <= 2) {
+                        if (x >= 0 && x < 3 && y >= 0 && y < 3) {
                             std::cout << x << y << "=["<< cValue << "]";        
                         }
 
                         for (int r = 0; r < vFoundRegions.size(); r++) {
                             sea5kgSudokuRegion region = vFoundRegions[r];
-                            
                             if (isPossibleValueOnlyOnce(cValue, region)) {
                                 m_vCells[i]->setValue(cValue);
                                 nSet++;
@@ -299,7 +322,6 @@ bool sea5kgSudoku::isPossibleValueOnlyOnce(char cValue, const sea5kgSudokuRegion
             }
         }
     }
-    // std::cout << nCount << std::endl;
     return nCount == 1;
 }
 
@@ -344,6 +366,12 @@ void sea5kgSudoku::applyClassicRegionsFor9x9() {
             m_vRegions.push_back(sea5kgSudokuRegion(vCells));
         }
     }
+}
+
+//----------------------------------------------------------------------------
+
+const std::vector<sea5kgSudokuRegion> &sea5kgSudoku::getRegions() const {
+    return m_vRegions;
 }
 
 //----------------------------------------------------------------------------
