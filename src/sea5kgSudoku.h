@@ -18,6 +18,7 @@ class sea5kgSudokuCell {
         void clear();
         void setPossibleValues(const std::string &sAlphabet);
         void excludePossibleValue(char cValue);
+        std::string getOnelinePossibleValues();
 
     private:
         int m_nPosX;
@@ -35,6 +36,7 @@ class sea5kgSudokuRegion {
         std::pair<int,int> getMin() const;
         std::pair<int,int> getMax() const;
         bool has(int x, int y);
+        std::string getOnelineData();
 
     private:
         std::vector<std::pair<int,int>> m_vRegionCells;
@@ -59,6 +61,12 @@ class sea5kgSudoku
         const std::vector<sea5kgSudokuRegion> &getRegions() const;
 
         bool step();
+        
+        int getCountOfPossibleValuesInRegion(char cValue, const sea5kgSudokuRegion &region);
+        sea5kgSudokuCell &getCell(int x, int y);
+        sea5kgSudokuCell &getCell(const std::pair<int,int> &p);
+        void updatePossibleValues();
+        void findRegions(int x, int y, std::vector<sea5kgSudokuRegion> &foundRegions);
 
     private:
         std::string TAG;
@@ -67,9 +75,7 @@ class sea5kgSudoku
 
         std::vector<sea5kgSudokuCell *> m_vCells;
         std::vector<sea5kgSudokuRegion> m_vRegions;
-        void updatePossibleValues();
-        void findRegions(int x, int y, std::vector<sea5kgSudokuRegion> &foundRegions);
-        bool isPossibleValueOnlyOnce(char cValue, const sea5kgSudokuRegion &region);
+        
         std::string m_sAlphabet;
         int m_nLen;
 };

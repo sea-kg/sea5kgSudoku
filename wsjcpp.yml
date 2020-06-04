@@ -20,6 +20,14 @@ dependencies:
     url: "https://github.com/wsjcpp/wsjcpp-core:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_core"
+    for: package
+  - name: "nlohmann/json"
+    version: "v3.7.3"
+    url: "https://github.com/nlohmann/json:develop"
+    origin: "https://github.com/"
+    installation-dir: "./src.wsjcpp/nlohmann_json"
+    for: package
+
 distribution:
   - source-file: "src/sea5kgSudoku.cpp"
     target-file: "sea5kgSudoku.cpp"
@@ -34,3 +42,5 @@ unit-tests:
       description: "Check solving sudoku 9x9"
     - name: "Regions9x9"
       description: "Test regions 9x9"
+    - name: "IsPossibleValueOnlyOnce"
+      description: "Test only once possible value"
