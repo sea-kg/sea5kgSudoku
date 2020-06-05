@@ -1,8 +1,8 @@
-name: "SolvingSudoku"
-version: "v0.0.1"
+name: "sea5kgSudoku"
+version: "v0.0.2"
 cmake_minimum_required: "3.0"
 cmake_cxx_standard: "11"
-description: "SolvingSudoku"
+description: "Sudoku solver / sudoku generator"
 authors:
   - name: "Evgenii Sopov"
     email: "mrseakg@gmail.com"
@@ -13,6 +13,9 @@ origins:
 
 keywords:
   - "c++"
+  - "sudoku"
+  - "sudoku-solver"
+  - "sudoku-generator"
 
 dependencies:
   - name: "wsjcpp-core"
