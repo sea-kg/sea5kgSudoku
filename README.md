@@ -1,5 +1,7 @@
-SolvingSudoku
+sea5kgSudoku
 =============
+
+[![Build Status](https://api.travis-ci.com/sea-kg/sea5kgSudoku.svg?branch=master)](https://travis-ci.com/sea-kg/sea5kgSudoku)
 
 c++ Solving Sudoku
 
