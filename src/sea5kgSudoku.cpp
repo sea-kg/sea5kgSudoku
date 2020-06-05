@@ -244,6 +244,8 @@ std::string sea5kgSudoku::getPrintableData() {
 
     if (m_sType == sea5kgSudokuType::ST_6x6) {
         return getPrintableDataFor6x6();
+    } else if (m_sType == sea5kgSudokuType::ST_9x9) {
+        return getPrintableDataFor9x9();
     }
 
     int sch = 1;
@@ -620,5 +622,25 @@ std::string sea5kgSudoku::getPrintableDataFor6x6() {
         sRet += "|\n";
     }
     sRet += "+---+---+---++---+---+---+";
+    return sRet;
+}
+
+//----------------------------------------------------------------------------
+
+std::string sea5kgSudoku::getPrintableDataFor9x9() {
+    std::string sRet = "";
+    for (int y = 0; y < 9; y++) {
+        if (y % 3 == 0) {
+            sRet += "+---+---+---++---+---+---++---+---+---+\n";
+        }
+        for (int x = 0; x < 9; x++) {
+            if (x > 0 && x % 3 == 0) sRet += "|";
+            sRet += "| ";
+            sRet += getCell(x,y).getValue();
+            sRet += " ";
+        }
+        sRet += "|\n";
+    }
+    sRet += "+---+---+---++---+---+---++---+---+---+";
     return sRet;
 }

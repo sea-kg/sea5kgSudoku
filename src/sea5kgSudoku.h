@@ -92,6 +92,8 @@ class sea5kgSudoku
         void clearRow(int y);
         bool tryFillRowRandomly(int y);
         std::string getPrintableDataFor6x6();
+        std::string getPrintableDataFor9x9();
+        
         std::vector<sea5kgSudokuCell *> m_vCells;
         std::vector<sea5kgSudokuRegion> m_vRegions;
         
