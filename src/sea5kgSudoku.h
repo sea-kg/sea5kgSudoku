@@ -7,6 +7,13 @@
 // 2011-04-22 sea-kg
 // 2020-05-10 sea-kg
 
+class sea5kgSudokuType {
+    public:
+        static std::string SEA5KG_SUDOKU_NONE;
+        static std::string SEA5KG_SUDOKU_6x6;
+        static std::string SEA5KG_SUDOKU_9x9;
+};
+
 //----------------------------------------------------------------------------
 
 class sea5kgSudokuCell {
@@ -47,7 +54,11 @@ class sea5kgSudokuRegion {
 class sea5kgSudoku
 {
     public:
-        sea5kgSudoku(const std::string &sAlphabet);
+        sea5kgSudoku(
+            const std::string &sAlphabet,
+            const std::string &sSudokuType
+        );
+
         ~sea5kgSudoku();
         void setData(const std::string &sPole);
 
@@ -55,12 +66,11 @@ class sea5kgSudoku
         std::string getOnelineData();
         void coutVariant();
         void clearAll();
-        
-        void applyClassicRegionsFor6x6();
-        void applyClassicRegionsFor9x9();
+
         const std::vector<sea5kgSudokuRegion> &getRegions() const;
 
         bool step();
+        void solve();
         
         int getCountOfPossibleValuesInRegion(char cValue, const sea5kgSudokuRegion &region);
         sea5kgSudokuCell &getCell(int x, int y);
@@ -71,6 +81,8 @@ class sea5kgSudoku
     private:
         std::string TAG;
 
+        void applyClassicRegionsFor6x6();
+        void applyClassicRegionsFor9x9();
         void addRegionsRowsAndColumns();
 
         std::vector<sea5kgSudokuCell *> m_vCells;

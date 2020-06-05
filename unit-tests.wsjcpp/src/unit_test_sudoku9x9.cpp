@@ -49,13 +49,12 @@ bool UnitTestSudoku9x9::run() {
         "975632148812475963346891527658143279237589614491267385184956732523718496769324851"
     ));
 
-    sea5kgSudoku sudoku("123456789");
+    sea5kgSudoku sudoku("123456789", "9x9");
     for (int i = 0; i < tests.size(); i++) {
         LTest test = tests[i];
         sudoku.clearAll();
         sudoku.setData(test.sSrc);
         // sudoku->coutPole();
-        sudoku.applyClassicRegionsFor9x9();
 
         // while fulfilling performed
         while (sudoku.step()) {

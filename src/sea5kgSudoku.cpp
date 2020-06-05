@@ -4,6 +4,13 @@
 #include <algorithm>
 
 //----------------------------------------------------------------------------
+// sea5kgSudokuType
+
+std::string sea5kgSudokuType::SEA5KG_SUDOKU_NONE = "none";
+std::string sea5kgSudokuType::SEA5KG_SUDOKU_6x6 = "6x6";
+std::string sea5kgSudokuType::SEA5KG_SUDOKU_9x9 = "9x9";
+
+//----------------------------------------------------------------------------
 // sea5kgSudokuCell
 
 sea5kgSudokuCell::sea5kgSudokuCell(int nPosX, int nPosY, char cValue) {
@@ -128,7 +135,10 @@ std::string sea5kgSudokuRegion::getOnelineData() {
 // -----------------------------------------------------------------------------
 // sea5kgSudoku
 
-sea5kgSudoku::sea5kgSudoku(const std::string &sAlphabet) {
+sea5kgSudoku::sea5kgSudoku(
+    const std::string &sAlphabet,
+    const std::string &sSudokuType
+) {
     TAG = "sea5kgSudoku";
     int nLength = sAlphabet.length();
 
@@ -160,32 +170,41 @@ sea5kgSudoku::sea5kgSudoku(const std::string &sAlphabet) {
 
     for (int x = 0; x < m_nLen; x++) {
         for (int y = 0; y < m_nLen; y++) {
-            m_vCells.push_back(new sea5kgSudokuCell(x,y,'-'));
+            m_vCells.push_back(new sea5kgSudokuCell(x, y, '-'));
         }
     };
 
-    // prepare fields
+    if (sSudokuType == sea5kgSudokuType::SEA5KG_SUDOKU_NONE) {
+        // just skip
+    } else if (sSudokuType == sea5kgSudokuType::SEA5KG_SUDOKU_6x6) {
+        applyClassicRegionsFor6x6();
+    } else if (sSudokuType == sea5kgSudokuType::SEA5KG_SUDOKU_9x9) {
+        applyClassicRegionsFor9x9();
+    } else {
+        WsjcppLog::throw_err(TAG, "Unknown sudoku type");
+    }
 }
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 sea5kgSudoku::~sea5kgSudoku() {
     this->clearAll();
 };
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-void sea5kgSudoku::setData(const std::string &sPole) {
-    int nLen = m_sAlphabet.length();
-    if (sPole.length() != (nLen*nLen)) {
-        WsjcppLog::throw_err(TAG, "Wrong size of data");
+void sea5kgSudoku::setData(const std::string &sData) {
+    int nExpectedLen = m_nLen * m_nLen;
+    if (sData.length() != nExpectedLen) {
+        WsjcppLog::throw_err(TAG, "Wrong size of data! Expected "
+            + std::to_string(nExpectedLen) + ", but got '"
+            + std::to_string(sData.length()) + "'");
     }
 
-    // m_vCells.clear();
-    for (int x = 0; x < nLen; x++) {
-        for (int y = 0; y < nLen; y++) {
-            int i = x + y*nLen;
-            m_vCells[i]->setValue(sPole[i]);
+    for (int x = 0; x < m_nLen; x++) {
+        for (int y = 0; y < m_nLen; y++) {
+            int i = x + (y * m_nLen);
+            getCell(x, y).setValue(sData[i]);
         }
     }
 }
@@ -292,36 +311,6 @@ void sea5kgSudoku::findRegions(int x, int y, std::vector<sea5kgSudokuRegion> &fo
 
 //----------------------------------------------------------------------------
 
-void sea5kgSudoku::applyClassicRegionsFor9x9() {
-    if (m_sAlphabet.length() != 9) {
-        WsjcppLog::throw_err(TAG, "Alphabet must have size 9");
-    }
-    // depending fill
-    m_vRegions.clear();
-    addRegionsRowsAndColumns();
-
-    // add 9 squares
-    for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 3; y++) {
-            std::vector<std::pair<int,int>> vCells;
-            int x0 = x*3;
-            int y0 = y*3;
-            vCells.push_back(std::pair<int,int>(x0,y0));
-            vCells.push_back(std::pair<int,int>(x0,y0+1));
-            vCells.push_back(std::pair<int,int>(x0,y0+2));
-            vCells.push_back(std::pair<int,int>(x0+1,y0));
-            vCells.push_back(std::pair<int,int>(x0+1,y0+1));
-            vCells.push_back(std::pair<int,int>(x0+1,y0+2));
-            vCells.push_back(std::pair<int,int>(x0+2,y0));
-            vCells.push_back(std::pair<int,int>(x0+2,y0+1));
-            vCells.push_back(std::pair<int,int>(x0+2,y0+2));
-            m_vRegions.push_back(sea5kgSudokuRegion(vCells));
-        }
-    }
-}
-
-//----------------------------------------------------------------------------
-
 const std::vector<sea5kgSudokuRegion> &sea5kgSudoku::getRegions() const {
     return m_vRegions;
 }
@@ -360,6 +349,13 @@ bool sea5kgSudoku::step() {
     return nSet > 0;
 };
 
+// ----------------------------------------------------------------------------
+
+void sea5kgSudoku::solve() {
+    while (step()) {
+        // next step
+    }
+}
 
 // ----------------------------------------------------------------------------
 
@@ -389,6 +385,35 @@ sea5kgSudokuCell &sea5kgSudoku::getCell(const std::pair<int,int> &p) {
     return *m_vCells[p.first + p.second * m_nLen];
 }
 
+//----------------------------------------------------------------------------
+
+void sea5kgSudoku::applyClassicRegionsFor9x9() {
+    if (m_sAlphabet.length() != 9) {
+        WsjcppLog::throw_err(TAG, "Alphabet must have size 9");
+    }
+    m_vRegions.clear();
+    addRegionsRowsAndColumns();
+
+    // add 9 squares
+    for (int x = 0; x < 3; x++) {
+        for (int y = 0; y < 3; y++) {
+            std::vector<std::pair<int,int>> vCells;
+            int x0 = x*3;
+            int y0 = y*3;
+            vCells.push_back(std::pair<int,int>(x0,y0));
+            vCells.push_back(std::pair<int,int>(x0,y0+1));
+            vCells.push_back(std::pair<int,int>(x0,y0+2));
+            vCells.push_back(std::pair<int,int>(x0+1,y0));
+            vCells.push_back(std::pair<int,int>(x0+1,y0+1));
+            vCells.push_back(std::pair<int,int>(x0+1,y0+2));
+            vCells.push_back(std::pair<int,int>(x0+2,y0));
+            vCells.push_back(std::pair<int,int>(x0+2,y0+1));
+            vCells.push_back(std::pair<int,int>(x0+2,y0+2));
+            m_vRegions.push_back(sea5kgSudokuRegion(vCells));
+        }
+    }
+}
+
 // ----------------------------------------------------------------------------
 
 void sea5kgSudoku::applyClassicRegionsFor6x6() {
@@ -399,6 +424,22 @@ void sea5kgSudoku::applyClassicRegionsFor6x6() {
     m_vRegions.clear();
     addRegionsRowsAndColumns();
 
+    // add 9 squares
+    for (int x = 0; x < 2; x++) {
+        for (int y = 0; y < 3; y++) {
+            std::vector<std::pair<int,int>> vCells;
+            int x0 = x*3;
+            int y0 = y*3;
+            vCells.push_back(std::pair<int,int>(x0,y0));
+            vCells.push_back(std::pair<int,int>(x0,y0+1));
+            vCells.push_back(std::pair<int,int>(x0,y0+2));
+            vCells.push_back(std::pair<int,int>(x0+1,y0));
+            vCells.push_back(std::pair<int,int>(x0+1,y0+1));
+            vCells.push_back(std::pair<int,int>(x0+1,y0+2));
+            m_vRegions.push_back(sea5kgSudokuRegion(vCells));
+        }
+    }
+    
     // TODO add 6 rectangules
 }
 
