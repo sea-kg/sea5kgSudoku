@@ -6,9 +6,9 @@
 //----------------------------------------------------------------------------
 // sea5kgSudokuType
 
-std::string sea5kgSudokuType::SEA5KG_SUDOKU_NONE = "none";
-std::string sea5kgSudokuType::SEA5KG_SUDOKU_6x6 = "6x6";
-std::string sea5kgSudokuType::SEA5KG_SUDOKU_9x9 = "9x9";
+std::string sea5kgSudokuType::ST_NONE = "none";
+std::string sea5kgSudokuType::ST_6x6 = "6x6";
+std::string sea5kgSudokuType::ST_9x9 = "9x9";
 
 //----------------------------------------------------------------------------
 // sea5kgSudokuCell
@@ -23,6 +23,20 @@ sea5kgSudokuCell::sea5kgSudokuCell(int nPosX, int nPosY, char cValue) {
 
 void sea5kgSudokuCell::setValue(char cValue) {
     m_cValue = cValue;
+}
+
+//----------------------------------------------------------------------------
+
+bool sea5kgSudokuCell::setRandomlyValueFromPossible() {
+    if (m_cValue != '-') {
+        return true;
+    }
+    if (m_vPossibleValues.size() == 0) {
+        return false;
+    }
+    int nIndex = rand() % m_vPossibleValues.size();
+    m_cValue = m_vPossibleValues[nIndex];
+    return true;
 }
 
 //----------------------------------------------------------------------------
@@ -141,7 +155,7 @@ sea5kgSudoku::sea5kgSudoku(
 ) {
     TAG = "sea5kgSudoku";
     int nLength = sAlphabet.length();
-
+    
     if (nLength < 2) {
         WsjcppLog::throw_err(TAG, "Sudoku alphabet size must be more then 1");
     }
@@ -166,6 +180,7 @@ sea5kgSudoku::sea5kgSudoku(
     }  
 
     m_sAlphabet = sAlphabet;
+    m_sType = sSudokuType;
     m_nLen = m_sAlphabet.length();
 
     for (int x = 0; x < m_nLen; x++) {
@@ -174,11 +189,11 @@ sea5kgSudoku::sea5kgSudoku(
         }
     };
 
-    if (sSudokuType == sea5kgSudokuType::SEA5KG_SUDOKU_NONE) {
+    if (sSudokuType == sea5kgSudokuType::ST_NONE) {
         // just skip
-    } else if (sSudokuType == sea5kgSudokuType::SEA5KG_SUDOKU_6x6) {
+    } else if (sSudokuType == sea5kgSudokuType::ST_6x6) {
         applyClassicRegionsFor6x6();
-    } else if (sSudokuType == sea5kgSudokuType::SEA5KG_SUDOKU_9x9) {
+    } else if (sSudokuType == sea5kgSudokuType::ST_9x9) {
         applyClassicRegionsFor9x9();
     } else {
         WsjcppLog::throw_err(TAG, "Unknown sudoku type");
@@ -200,18 +215,37 @@ void sea5kgSudoku::setData(const std::string &sData) {
             + std::to_string(nExpectedLen) + ", but got '"
             + std::to_string(sData.length()) + "'");
     }
-
-    for (int x = 0; x < m_nLen; x++) {
-        for (int y = 0; y < m_nLen; y++) {
-            int i = x + (y * m_nLen);
-            getCell(x, y).setValue(sData[i]);
-        }
+    for (int i = 0; i < sData.length(); i++) {
+        m_vCells[i]->setValue(sData[i]);
     }
 }
 
 //-----------------------------------------------------------------------------
 
-std::string sea5kgSudoku::printData() {
+std::string sea5kgSudoku::getData() {
+    std::string sRet = "";
+    for (unsigned int i = 0; i < m_vCells.size(); i++) {
+        sRet += m_vCells[i]->getValue();
+    };
+    return sRet;
+}
+
+//-----------------------------------------------------------------------------
+
+void sea5kgSudoku::setEmptyData() {
+    for (unsigned int i = 0; i < m_vCells.size(); i++) {
+        m_vCells[i]->setValue('-');
+    };
+}
+
+//-----------------------------------------------------------------------------
+
+std::string sea5kgSudoku::getPrintableData() {
+
+    if (m_sType == sea5kgSudokuType::ST_6x6) {
+        return getPrintableDataFor6x6();
+    }
+
     int sch = 1;
     std::string sData = " +";
     for (int i = 0; i < m_nLen; i++) {
@@ -232,16 +266,6 @@ std::string sea5kgSudoku::printData() {
     }
     return sData;
 };
-
-//-----------------------------------------------------------------------------
-
-std::string sea5kgSudoku::getOnelineData() {
-    std::string sRet = "";
-    for (unsigned int i = 0; i < m_vCells.size(); i++) {
-        sRet += m_vCells[i]->getValue();
-    };
-    return sRet;
-}
 
 //-----------------------------------------------------------------------------
 
@@ -359,6 +383,74 @@ void sea5kgSudoku::solve() {
 
 // ----------------------------------------------------------------------------
 
+bool sea5kgSudoku::generate(int nMaxTries) {
+
+    // first step fill the sudoku
+    int nTries = 0;
+    while (nTries < nMaxTries) {
+        nTries++;
+        // TODO some how improve
+        if (!tryFillCellsRandomly()) {
+            std::cout << "Failed: " << std::endl << getPrintableData() << std::endl;
+            setEmptyData();
+            continue;
+        }
+        if (isSolved()) {
+            break;
+        }
+    }
+    if (!isSolved()) {
+        return false;
+    }
+    std::cout << "Found: " << std::endl << getPrintableData() << std::endl;
+
+    // second step erase cells from sudoku
+    std::string sData = getData();
+
+    nTries = 0;
+    while (nTries < nMaxTries) {
+        // std::cout << sData << std::endl;
+        setData(sData);
+
+        std::vector<std::pair<int,int>> vPositions;
+        for (int x = 0; x < m_nLen; x++) {
+            for (int y = 0; y < m_nLen; y++) {
+                if (getCell(x,y).getValue() != '-') {
+                    vPositions.push_back(std::pair<int,int>(x,y));
+                }
+            }
+        }
+
+        int i = rand() % vPositions.size();
+        std::pair<int,int> p = vPositions[i];
+        getCell(p).setValue('-');
+        std::string sNewData = getData();
+        solve();
+        if (isSolved()) {
+            sData = sNewData;
+        } else {
+            nTries++;
+        }
+    }
+    setData(sData);
+    return true;
+}
+
+// ----------------------------------------------------------------------------
+
+bool sea5kgSudoku::isSolved() {
+    for (int x = 0; x < m_nLen; x++) {
+        for (int y = 0; y < m_nLen; y++) {
+            if (getCell(x,y).getValue() == '-') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// ----------------------------------------------------------------------------
+
 int sea5kgSudoku::getCountOfPossibleValuesInRegion(char cValue, const sea5kgSudokuRegion &region) {
     int nCount = 0;
     std::vector<std::pair<int,int>> vRegionCells = region.getRegionCells();
@@ -429,18 +521,17 @@ void sea5kgSudoku::applyClassicRegionsFor6x6() {
         for (int y = 0; y < 3; y++) {
             std::vector<std::pair<int,int>> vCells;
             int x0 = x*3;
-            int y0 = y*3;
+            int y0 = y*2;
+            std::cout << x0 << "x" << y0 << std::endl;
             vCells.push_back(std::pair<int,int>(x0,y0));
             vCells.push_back(std::pair<int,int>(x0,y0+1));
-            vCells.push_back(std::pair<int,int>(x0,y0+2));
             vCells.push_back(std::pair<int,int>(x0+1,y0));
             vCells.push_back(std::pair<int,int>(x0+1,y0+1));
-            vCells.push_back(std::pair<int,int>(x0+1,y0+2));
+            vCells.push_back(std::pair<int,int>(x0+2,y0+0));
+            vCells.push_back(std::pair<int,int>(x0+2,y0+1));
             m_vRegions.push_back(sea5kgSudokuRegion(vCells));
         }
     }
-    
-    // TODO add 6 rectangules
 }
 
 //----------------------------------------------------------------------------
@@ -461,3 +552,73 @@ void sea5kgSudoku::addRegionsRowsAndColumns() {
 }
 
 //----------------------------------------------------------------------------
+
+bool sea5kgSudoku::tryFillCellsRandomly() {
+    int y = 0;
+    int nTries = 0;
+    while (y < m_nLen) {
+        if (!tryFillRowRandomly(y)) {
+            bool bLastResult = false;
+            for (int i = y; i >= 0; i--) {
+                for (int y0 = y; y0 <= y; y0++) {
+                    clearRow(y0);
+                }
+                for (int y0 = i; y0 <= y; y0++) {
+                    bLastResult = tryFillRowRandomly(y0);
+                    if (!bLastResult) {
+                        break;
+                    }
+                }
+            }
+            if (!bLastResult) {
+                return false;
+            }
+        }
+        y++;
+        continue;
+    }
+    return true;
+}
+
+//----------------------------------------------------------------------------
+
+void sea5kgSudoku::clearRow(int y) {
+    for (int x = 0; x < m_nLen; x++) {
+        getCell(x,y).setValue('-');
+    }
+}
+
+//----------------------------------------------------------------------------
+
+bool sea5kgSudoku::tryFillRowRandomly(int y) {
+    updatePossibleValues();
+    for (int x = 0; x < m_nLen; x++) {
+        if (getCell(x, y).getValue() == '-') {
+            if (!getCell(x, y).setRandomlyValueFromPossible()) {
+                return false;
+            }
+            updatePossibleValues();
+        }
+    }
+    return true;
+}
+
+//----------------------------------------------------------------------------
+
+std::string sea5kgSudoku::getPrintableDataFor6x6() {
+    std::string sRet = "";
+    for (int y = 0; y < 6; y++) {
+        if (y % 2 == 0) {
+            sRet += "+---+---+---++---+---+---+\n";
+        }
+        for (int x = 0; x < 6; x++) {
+            if (x > 0 && x % 3 == 0) sRet += "|";
+            sRet += "| ";
+            sRet += getCell(x,y).getValue();
+            sRet += " ";
+        }
+        sRet += "|\n";
+    }
+    sRet += "+---+---+---++---+---+---+";
+    return sRet;
+}

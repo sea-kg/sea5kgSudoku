@@ -9,9 +9,9 @@
 
 class sea5kgSudokuType {
     public:
-        static std::string SEA5KG_SUDOKU_NONE;
-        static std::string SEA5KG_SUDOKU_6x6;
-        static std::string SEA5KG_SUDOKU_9x9;
+        static std::string ST_NONE;
+        static std::string ST_6x6;
+        static std::string ST_9x9;
 };
 
 //----------------------------------------------------------------------------
@@ -20,6 +20,7 @@ class sea5kgSudokuCell {
     public:
         sea5kgSudokuCell(int nPosX, int nPosY, char cValue);
         void setValue(char cValue);
+        bool setRandomlyValueFromPossible();
         char getValue();
         const std::vector<char> &getPossibleValues();
         void clear();
@@ -61,9 +62,11 @@ class sea5kgSudoku
 
         ~sea5kgSudoku();
         void setData(const std::string &sPole);
+        std::string getData();
+        void setEmptyData();
 
-        std::string printData();
-        std::string getOnelineData();
+        std::string getPrintableData();
+        
         void coutVariant();
         void clearAll();
 
@@ -71,7 +74,8 @@ class sea5kgSudoku
 
         bool step();
         void solve();
-        
+        bool generate(int nMaxTries);
+        bool isSolved();
         int getCountOfPossibleValuesInRegion(char cValue, const sea5kgSudokuRegion &region);
         sea5kgSudokuCell &getCell(int x, int y);
         sea5kgSudokuCell &getCell(const std::pair<int,int> &p);
@@ -84,11 +88,15 @@ class sea5kgSudoku
         void applyClassicRegionsFor6x6();
         void applyClassicRegionsFor9x9();
         void addRegionsRowsAndColumns();
-
+        bool tryFillCellsRandomly();
+        void clearRow(int y);
+        bool tryFillRowRandomly(int y);
+        std::string getPrintableDataFor6x6();
         std::vector<sea5kgSudokuCell *> m_vCells;
         std::vector<sea5kgSudokuRegion> m_vRegions;
         
         std::string m_sAlphabet;
+        std::string m_sType;
         int m_nLen;
 };
 

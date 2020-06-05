@@ -54,20 +54,9 @@ bool UnitTestSudoku9x9::run() {
         LTest test = tests[i];
         sudoku.clearAll();
         sudoku.setData(test.sSrc);
-        // sudoku->coutPole();
-
-        // while fulfilling performed
-        while (sudoku.step()) {
-            // nothing
-        };
-
+        sudoku.solve();
         compareS(bTestSuccess, "Test " + std::to_string(i), sudoku.getOnelineData(), test.sExpected);
-
-
-        
-        // sudoku->
     }
-    
     return bTestSuccess;
 }
 
