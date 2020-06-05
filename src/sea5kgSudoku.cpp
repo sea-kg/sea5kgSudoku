@@ -343,33 +343,13 @@ bool sea5kgSudoku::step() {
                 } else {
                     std::vector<sea5kgSudokuRegion> vFoundRegions;
                     findRegions(x, y, vFoundRegions);
-                    if (x == 2 && y == 2) {
-                        std::cout << "Possible values 0,0: " << getCell(0,0).getOnelinePossibleValues() << std::endl;
-                        std::cout << "Possible values 0,1: " << getCell(0,1).getOnelinePossibleValues() << std::endl;
-                        std::cout << "Possible values 0,2: " << getCell(0,2).getOnelinePossibleValues() << std::endl;
-                        std::cout << "Possible values 1,0: " << getCell(1,0).getOnelinePossibleValues() << std::endl;
-                        std::cout << "Possible values 2,2: " << getCell(2,2).getOnelinePossibleValues() << std::endl;
-                        std::cout << "Value 2,2: " << getCell(2,2).getValue() << std::endl;
-
-                        for (int r = 0; r < vFoundRegions.size(); r++) {
-                            std::cout << vFoundRegions[r].getOnelineData() << std::endl;
-                        }
-                    }
-
                     for (int p = 0; p < vPossibleValues.size(); p++) {
                         char cValue = vPossibleValues[p];
                         for (int r = 0; r < vFoundRegions.size(); r++) {
                             sea5kgSudokuRegion region = vFoundRegions[r];
-                            if (x == 2 && y == 2) {
-                                std::cout << ">>>> Found value! " << cValue << std::endl;
-                                std::cout << "Found vFoundRegions[r].getOnelineData()! " << vFoundRegions[r].getOnelineData() << std::endl;
-                            }
                             if (getCountOfPossibleValuesInRegion(cValue, region) == 1) {
                                 getCell(x,y).setValue(cValue);
                                 nSet++;
-                            }
-                            if (x == 2 && y == 2) {
-                                std::cout << "<<< Found value! " << cValue << std::endl;
                             }
                         }
                     }

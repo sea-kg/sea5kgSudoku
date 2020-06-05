@@ -11,52 +11,45 @@ int main(int argc, const char* argv[]) {
     if (!WsjcppCore::dirExists(".logs")) {
         WsjcppCore::makeDir(".logs");
     }
-    WsjcppLog::setPrefixLogFile("wsjcpp");
+    WsjcppLog::setPrefixLogFile("sea5kgSudoku");
     WsjcppLog::setLogDirectory(".logs");
 
 
-    std::string pole = "";
+    std::string sData = "";
     
     if (argc == 2) {
         std::cout << "\nSource data:";
-        pole = std::string(argv[1]);
+        sData = std::string(argv[1]);
     } else {
         std::cout << "Example:";
-        pole = "--7--5--2-86-3-9---5--7------4--8---89-----75---1--3------2--6---8-6-71-3--9--8--";
+        sData = "--7--5--2-86-3-9---5--7------4--8---89-----75---1--3------2--6---8-6-71-3--9--8--";
     };
 
-    if (pole.length() != 81) {
+    if (sData.length() != 81) {
         std::cout << "The number of characters to be 81!\n\n";
         return -1; 
     };
     
     sea5kgSudoku sudoku("123456789");
-    sudoku.setData( pole );
+    sudoku.setData(sData);
     
     std::cout << "Source data: " << std::endl << sudoku.printData() << std::endl;
     sudoku.applyClassicRegionsFor9x9();
     
-    //while fulfilling performed
-    // sudoku.step();
+    // while fulfilling performed
     int nStep = 0;
+    std::cout << "Step " << nStep << ": " << sData << std::endl;
     while (sudoku.step()) {
         // nothing
-        std::cout << "Step " << nStep << ":" << sudoku.getOnelineData() << std::endl;
+        std::cout << "Step " << nStep << ": " << sudoku.getOnelineData() << std::endl;
         nStep++;
     };
-
-    sudoku.step();
-    std::cout << sudoku.getOnelineData() << std::endl;
     
-    //decision may be incomplete (!)
+    // decision may be incomplete (!)
     std::cout << "Solution:" << std::endl << sudoku.printData() << std::endl;
     
-    std::cout << pole << std::endl;
+    std::cout << sData << std::endl;
     std::cout << sudoku.getOnelineData() << std::endl;
-    std::cout
-        << "Expected" << std::endl
-        << "947685132286431957153279486634758291891342675572196348719824563428563719365917824" << std::endl
-    ;
     std::cout << "\n";
     return 0;
 }
