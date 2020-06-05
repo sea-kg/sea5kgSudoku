@@ -10,6 +10,7 @@
 class sea5kgSudokuType {
     public:
         static std::string ST_NONE;
+        static std::string ST_5x5;
         static std::string ST_6x6;
         static std::string ST_9x9;
 };
@@ -85,12 +86,14 @@ class sea5kgSudoku
     private:
         std::string TAG;
 
+        void applyClassicRegionsFor5x5();
         void applyClassicRegionsFor6x6();
         void applyClassicRegionsFor9x9();
         void addRegionsRowsAndColumns();
         bool tryFillCellsRandomly();
         void clearRow(int y);
         bool tryFillRowRandomly(int y);
+        std::string getPrintableDataFor5x5();
         std::string getPrintableDataFor6x6();
         std::string getPrintableDataFor9x9();
         

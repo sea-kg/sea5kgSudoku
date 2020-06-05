@@ -9,6 +9,8 @@ void printHelp(const std::string &sProgramName) {
         << std::endl
         << "Usage examples: "
         << std::endl
+        << "  " << sProgramName << " list"
+        << std::endl
         << "  " << sProgramName << " solve \"123456\" \"6x6\" \"--3-1-56-32--542-32-645--12-45-4-1--\""
         << std::endl
         << "  " << sProgramName << " solve \"123456789\" \"9x9\" \"--7--5--2-86-3-9---5--7------4--8---89-----75---1--3------2--6---8-6-71-3--9--8--\""
@@ -37,7 +39,15 @@ int main(int argc, const char* argv[]) {
         sSubCommand = std::string(argv[1]);
     }
 
-    if (sSubCommand == "solve") {
+    if (sSubCommand == "list") {
+        std::cout
+            << "List sudoku types:" << std::endl
+            << " - " << sea5kgSudokuType::ST_5x5 << std::endl
+            << " - " << sea5kgSudokuType::ST_6x6 << std::endl
+            << " - " << sea5kgSudokuType::ST_9x9 << std::endl
+            << std::endl;
+        return 0;
+    } else if (sSubCommand == "solve") {
         if (argc != 5) {
             printHelp(sProgramName);
             return -1;

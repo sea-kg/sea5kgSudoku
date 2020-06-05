@@ -7,6 +7,7 @@
 // sea5kgSudokuType
 
 std::string sea5kgSudokuType::ST_NONE = "none";
+std::string sea5kgSudokuType::ST_5x5 = "5x5";
 std::string sea5kgSudokuType::ST_6x6 = "6x6";
 std::string sea5kgSudokuType::ST_9x9 = "9x9";
 
@@ -191,6 +192,8 @@ sea5kgSudoku::sea5kgSudoku(
 
     if (sSudokuType == sea5kgSudokuType::ST_NONE) {
         // just skip
+    } else if (sSudokuType == sea5kgSudokuType::ST_5x5) {
+        applyClassicRegionsFor5x5();
     } else if (sSudokuType == sea5kgSudokuType::ST_6x6) {
         applyClassicRegionsFor6x6();
     } else if (sSudokuType == sea5kgSudokuType::ST_9x9) {
@@ -242,7 +245,9 @@ void sea5kgSudoku::setEmptyData() {
 
 std::string sea5kgSudoku::getPrintableData() {
 
-    if (m_sType == sea5kgSudokuType::ST_6x6) {
+    if (m_sType == sea5kgSudokuType::ST_5x5) {
+        return getPrintableDataFor5x5();
+    } else if (m_sType == sea5kgSudokuType::ST_6x6) {
         return getPrintableDataFor6x6();
     } else if (m_sType == sea5kgSudokuType::ST_9x9) {
         return getPrintableDataFor9x9();
@@ -479,6 +484,95 @@ sea5kgSudokuCell &sea5kgSudoku::getCell(const std::pair<int,int> &p) {
     return *m_vCells[p.first + p.second * m_nLen];
 }
 
+// ----------------------------------------------------------------------------
+
+void sea5kgSudoku::applyClassicRegionsFor5x5() {
+    if (m_sAlphabet.length() != 5) {
+        WsjcppLog::throw_err(TAG, "Alphabet must have size 5");
+    }
+    /*
+    +-----------+-------+
+    | -   -   2 | -   - |
+    |       +---+       |
+    | -   4 | - | -   - |
+    +---+---+   +---+   |
+    | 1 | -   4   - | - |
+    |   +---+   +---+---+
+    | 5   - | - | -   2 |
+    |       +---+       |
+    | -   2 | -   -   3 |
+    +---+---+---+---+---+
+    */
+    m_vRegions.clear();
+    addRegionsRowsAndColumns();
+    std::vector<std::pair<int,int>> vRegion1;
+    vRegion1.push_back(std::pair<int,int>(0,0));
+    vRegion1.push_back(std::pair<int,int>(1,0));
+    vRegion1.push_back(std::pair<int,int>(2,0));
+    vRegion1.push_back(std::pair<int,int>(0,1));
+    vRegion1.push_back(std::pair<int,int>(1,1));
+    m_vRegions.push_back(sea5kgSudokuRegion(vRegion1));
+
+    std::vector<std::pair<int,int>> vRegion2;
+    vRegion2.push_back(std::pair<int,int>(3,0));
+    vRegion2.push_back(std::pair<int,int>(4,0));
+    vRegion2.push_back(std::pair<int,int>(3,1));
+    vRegion2.push_back(std::pair<int,int>(4,1));
+    vRegion2.push_back(std::pair<int,int>(4,2));
+    m_vRegions.push_back(sea5kgSudokuRegion(vRegion2));
+
+    std::vector<std::pair<int,int>> vRegion3;
+    vRegion3.push_back(std::pair<int,int>(0,2));
+    vRegion3.push_back(std::pair<int,int>(0,3));
+    vRegion3.push_back(std::pair<int,int>(1,3));
+    vRegion3.push_back(std::pair<int,int>(0,4));
+    vRegion3.push_back(std::pair<int,int>(1,4));
+    m_vRegions.push_back(sea5kgSudokuRegion(vRegion3));
+
+    std::vector<std::pair<int,int>> vRegion4;
+    vRegion4.push_back(std::pair<int,int>(3,3));
+    vRegion4.push_back(std::pair<int,int>(4,3));
+    vRegion4.push_back(std::pair<int,int>(2,4));
+    vRegion4.push_back(std::pair<int,int>(3,4));
+    vRegion4.push_back(std::pair<int,int>(4,4));
+    m_vRegions.push_back(sea5kgSudokuRegion(vRegion4));
+
+    std::vector<std::pair<int,int>> vRegion5;
+    vRegion5.push_back(std::pair<int,int>(2,1));
+    vRegion5.push_back(std::pair<int,int>(1,2));
+    vRegion5.push_back(std::pair<int,int>(2,2));
+    vRegion5.push_back(std::pair<int,int>(3,2));
+    vRegion5.push_back(std::pair<int,int>(2,3));
+    m_vRegions.push_back(sea5kgSudokuRegion(vRegion5));
+}
+
+// ----------------------------------------------------------------------------
+
+void sea5kgSudoku::applyClassicRegionsFor6x6() {
+    if (m_sAlphabet.length() != 6) {
+        WsjcppLog::throw_err(TAG, "Alphabet must have size 6");
+    }
+
+    m_vRegions.clear();
+    addRegionsRowsAndColumns();
+
+    // add 6 other regions
+    for (int x = 0; x < 2; x++) {
+        for (int y = 0; y < 3; y++) {
+            std::vector<std::pair<int,int>> vCells;
+            int x0 = x*3;
+            int y0 = y*2;
+            vCells.push_back(std::pair<int,int>(x0,y0));
+            vCells.push_back(std::pair<int,int>(x0,y0+1));
+            vCells.push_back(std::pair<int,int>(x0+1,y0));
+            vCells.push_back(std::pair<int,int>(x0+1,y0+1));
+            vCells.push_back(std::pair<int,int>(x0+2,y0+0));
+            vCells.push_back(std::pair<int,int>(x0+2,y0+1));
+            m_vRegions.push_back(sea5kgSudokuRegion(vCells));
+        }
+    }
+}
+
 //----------------------------------------------------------------------------
 
 void sea5kgSudoku::applyClassicRegionsFor9x9() {
@@ -503,34 +597,6 @@ void sea5kgSudoku::applyClassicRegionsFor9x9() {
             vCells.push_back(std::pair<int,int>(x0+2,y0));
             vCells.push_back(std::pair<int,int>(x0+2,y0+1));
             vCells.push_back(std::pair<int,int>(x0+2,y0+2));
-            m_vRegions.push_back(sea5kgSudokuRegion(vCells));
-        }
-    }
-}
-
-// ----------------------------------------------------------------------------
-
-void sea5kgSudoku::applyClassicRegionsFor6x6() {
-    if (m_sAlphabet.length() != 6) {
-        WsjcppLog::throw_err(TAG, "Alphabet must have size 6");
-    }
-
-    m_vRegions.clear();
-    addRegionsRowsAndColumns();
-
-    // add 9 squares
-    for (int x = 0; x < 2; x++) {
-        for (int y = 0; y < 3; y++) {
-            std::vector<std::pair<int,int>> vCells;
-            int x0 = x*3;
-            int y0 = y*2;
-            std::cout << x0 << "x" << y0 << std::endl;
-            vCells.push_back(std::pair<int,int>(x0,y0));
-            vCells.push_back(std::pair<int,int>(x0,y0+1));
-            vCells.push_back(std::pair<int,int>(x0+1,y0));
-            vCells.push_back(std::pair<int,int>(x0+1,y0+1));
-            vCells.push_back(std::pair<int,int>(x0+2,y0+0));
-            vCells.push_back(std::pair<int,int>(x0+2,y0+1));
             m_vRegions.push_back(sea5kgSudokuRegion(vCells));
         }
     }
@@ -603,6 +669,73 @@ bool sea5kgSudoku::tryFillRowRandomly(int y) {
         }
     }
     return true;
+}
+
+//----------------------------------------------------------------------------
+
+std::string sea5kgSudoku::getPrintableDataFor5x5() {
+    std::string sRet = "+-----------+-------+\n";
+    sRet += "| "; 
+    sRet += getCell(0,0).getValue();
+    sRet += "   "; 
+    sRet += getCell(1,0).getValue();
+    sRet += "   "; 
+    sRet += getCell(2,0).getValue();
+    sRet += " | "; 
+    sRet += getCell(3,0).getValue();
+    sRet += "   "; 
+    sRet += getCell(4,0).getValue();
+    sRet += " |\n";
+    sRet += "|       +---+       |\n";
+    sRet += "| "; 
+    sRet += getCell(0,1).getValue();
+    sRet += "   "; 
+    sRet += getCell(1,1).getValue();
+    sRet += " | "; 
+    sRet += getCell(2,1).getValue();
+    sRet += " | "; 
+    sRet += getCell(3,1).getValue();
+    sRet += "   "; 
+    sRet += getCell(4,1).getValue();
+    sRet += " |\n"; 
+    sRet += "+---+---+   +---+   |\n";
+    sRet += "| "; 
+    sRet += getCell(0,2).getValue();
+    sRet += " | "; 
+    sRet += getCell(1,2).getValue();
+    sRet += "   "; 
+    sRet += getCell(2,2).getValue();
+    sRet += "   "; 
+    sRet += getCell(3,2).getValue();
+    sRet += " | "; 
+    sRet += getCell(4,2).getValue();
+    sRet += " |\n"; 
+    sRet += "|   +---+   +---+---+\n";
+    sRet += "| "; 
+    sRet += getCell(0,3).getValue();
+    sRet += "   "; 
+    sRet += getCell(1,3).getValue();
+    sRet += " | "; 
+    sRet += getCell(2,3).getValue();
+    sRet += " | "; 
+    sRet += getCell(3,3).getValue();
+    sRet += "   "; 
+    sRet += getCell(4,3).getValue();
+    sRet += " |\n";
+    sRet += "|       +---+       |\n"; 
+    sRet += "| "; 
+    sRet += getCell(0,4).getValue();
+    sRet += "   "; 
+    sRet += getCell(1,4).getValue();
+    sRet += " | "; 
+    sRet += getCell(2,4).getValue();
+    sRet += "   "; 
+    sRet += getCell(3,4).getValue();
+    sRet += "   ";
+    sRet += getCell(4,4).getValue();
+    sRet += " |\n"; 
+    sRet += "+---+---+---+---+---+";
+    return sRet;
 }
 
 //----------------------------------------------------------------------------
