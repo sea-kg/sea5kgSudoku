@@ -52,10 +52,9 @@ bool UnitTestSudoku9x9::run() {
     sea5kgSudoku sudoku("123456789", "9x9");
     for (int i = 0; i < tests.size(); i++) {
         LTest test = tests[i];
-        sudoku.clearAll();
         sudoku.setData(test.sSrc);
         sudoku.solve();
-        compareS(bTestSuccess, "Test " + std::to_string(i), sudoku.getOnelineData(), test.sExpected);
+        compareS(bTestSuccess, "Test " + std::to_string(i), sudoku.getData(), test.sExpected);
     }
     return bTestSuccess;
 }

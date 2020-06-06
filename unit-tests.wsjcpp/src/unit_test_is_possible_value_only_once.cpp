@@ -21,8 +21,8 @@ bool UnitTestIsPossibleValueOnlyOnce::run() {
     bool bTestSuccess = true;
     sea5kgSudoku sudoku("123456789", "9x9");
     sudoku.setData("--7-85-32-86-3-957-5--7--8---4758-9-89--4--755721963487--82-56---856-71-365917824");
-    std::cout << sudoku.getOnelineData() << std::endl;
-    std::cout << sudoku.printData() << std::endl;
+    std::cout << sudoku.getData() << std::endl;
+    std::cout << sudoku.getPrintableData() << std::endl;
 
     std::vector<std::pair<int,int>> vRegionCells;
     for (int x = 0; x < 3; x++) {
