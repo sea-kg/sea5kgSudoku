@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <wsjcpp_core.h>
 #include <sea5kgSudoku.h>
+#include <wsjcpp_light_web_server.h>
+#include <wsjcpp_light_web_http_handler_web_folder.h>
 
 void printHelp(const std::string &sProgramName) {
     std::cout
@@ -17,7 +19,8 @@ void printHelp(const std::string &sProgramName) {
         << std::endl
         << "  " << sProgramName << " generate \"123456\" \"6x6\""
         << std::endl
-
+        << "  " << sProgramName << " server 1234 ./web"
+        << std::endl
         << std::endl;
 }
 
@@ -81,8 +84,20 @@ int main(int argc, const char* argv[]) {
         std::cout << "FAIL: Could not try generate sudoku" << std::endl;
         return -1;
     } else if (sSubCommand == "server") {
-        std::cout << "Not implemented yet" << std::endl;
-        return -1;
+        if (argc != 4) {
+            printHelp(sProgramName);
+            return -1;
+        }
+
+        std::string sPort(argv[2]);
+        std::string sWebFolder(argv[3]);
+
+        WsjcppLightWebServer webServer;
+        webServer.setPort(atoi(sPort.c_str()));
+        webServer.setMaxWorkers(1);
+        webServer.addHandler(new WsjcppLightWebHttpHandlerWebFolder("/", sWebFolder));
+        webServer.startSync();
+        return 0;
     }
     printHelp(sProgramName);
     return -1;

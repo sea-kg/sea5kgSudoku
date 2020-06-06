@@ -281,6 +281,7 @@ void sea5kgSudoku::clearAll() {
     for (unsigned int i = 0; i < m_vCells.size(); i++) {
         m_vCells[i]->clear();
     };
+    m_vRegions.clear();
 };
 
 //-----------------------------------------------------------------------------

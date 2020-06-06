@@ -30,6 +30,12 @@ dependencies:
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/nlohmann_json"
     for: package
+  - name: "wsjcpp-light-web-server"
+    version: "v0.1.1"
+    url: "https://github.com/wsjcpp/wsjcpp-light-web-server:master"
+    origin: "https://github.com/"
+    installation-dir: "./src.wsjcpp/wsjcpp_light_web_server"
+    for: app
 
 distribution:
   - source-file: "src/sea5kgSudoku.cpp"
