@@ -19,8 +19,7 @@ void UnitTestRegions9x9::init() {
 
 bool UnitTestRegions9x9::run() {
     bool bTestSuccess = true;
-    sea5kgSudoku sudoku("123456789");
-    sudoku.applyClassicRegionsFor9x9();
+    sea5kgSudoku sudoku("123456789", "9x9");
     std::vector<sea5kgSudokuRegion> vRegions = sudoku.getRegions();
     compareN(bTestSuccess, "Regions size", vRegions.size(), 27);
     int nRows = 0;

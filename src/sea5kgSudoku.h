@@ -7,12 +7,21 @@
 // 2011-04-22 sea-kg
 // 2020-05-10 sea-kg
 
+class sea5kgSudokuType {
+    public:
+        static std::string ST_NONE;
+        static std::string ST_5x5;
+        static std::string ST_6x6;
+        static std::string ST_9x9;
+};
+
 //----------------------------------------------------------------------------
 
 class sea5kgSudokuCell {
     public:
         sea5kgSudokuCell(int nPosX, int nPosY, char cValue);
         void setValue(char cValue);
+        bool setRandomlyValueFromPossible();
         char getValue();
         const std::vector<char> &getPossibleValues();
         void clear();
@@ -47,21 +56,27 @@ class sea5kgSudokuRegion {
 class sea5kgSudoku
 {
     public:
-        sea5kgSudoku(const std::string &sAlphabet);
+        sea5kgSudoku(
+            const std::string &sAlphabet,
+            const std::string &sSudokuType
+        );
+
         ~sea5kgSudoku();
         void setData(const std::string &sPole);
+        std::string getData();
+        void setEmptyData();
 
-        std::string printData();
-        std::string getOnelineData();
+        std::string getPrintableData();
+        
         void coutVariant();
         void clearAll();
-        
-        void applyClassicRegionsFor6x6();
-        void applyClassicRegionsFor9x9();
+
         const std::vector<sea5kgSudokuRegion> &getRegions() const;
 
         bool step();
-        
+        void solve();
+        bool generate(int nMaxTries);
+        bool isSolved();
         int getCountOfPossibleValuesInRegion(char cValue, const sea5kgSudokuRegion &region);
         sea5kgSudokuCell &getCell(int x, int y);
         sea5kgSudokuCell &getCell(const std::pair<int,int> &p);
@@ -71,12 +86,22 @@ class sea5kgSudoku
     private:
         std::string TAG;
 
+        void applyClassicRegionsFor5x5();
+        void applyClassicRegionsFor6x6();
+        void applyClassicRegionsFor9x9();
         void addRegionsRowsAndColumns();
-
+        bool tryFillCellsRandomly();
+        void clearRow(int y);
+        bool tryFillRowRandomly(int y);
+        std::string getPrintableDataFor5x5();
+        std::string getPrintableDataFor6x6();
+        std::string getPrintableDataFor9x9();
+        
         std::vector<sea5kgSudokuCell *> m_vCells;
         std::vector<sea5kgSudokuRegion> m_vRegions;
         
         std::string m_sAlphabet;
+        std::string m_sType;
         int m_nLen;
 };
 

@@ -4,6 +4,23 @@
 #include <wsjcpp_core.h>
 #include <sea5kgSudoku.h>
 
+void printHelp(const std::string &sProgramName) {
+    std::cout
+        << std::endl
+        << "Usage examples: "
+        << std::endl
+        << "  " << sProgramName << " list"
+        << std::endl
+        << "  " << sProgramName << " solve \"123456\" \"6x6\" \"--3-1-56-32--542-32-645--12-45-4-1--\""
+        << std::endl
+        << "  " << sProgramName << " solve \"123456789\" \"9x9\" \"--7--5--2-86-3-9---5--7------4--8---89-----75---1--3------2--6---8-6-71-3--9--8--\""
+        << std::endl
+        << "  " << sProgramName << " generate \"123456\" \"6x6\""
+        << std::endl
+
+        << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
     std::string TAG = "MAIN";
     std::string appName = std::string(WSJCPP_APP_NAME);
@@ -14,43 +31,60 @@ int main(int argc, const char* argv[]) {
     WsjcppLog::setPrefixLogFile("sea5kgSudoku");
     WsjcppLog::setLogDirectory(".logs");
 
+    WsjcppCore::initRandom();
 
-    std::string sData = "";
-    
-    if (argc == 2) {
-        std::cout << "\nSource data:";
-        sData = std::string(argv[1]);
-    } else {
-        std::cout << "Example:";
-        sData = "--7--5--2-86-3-9---5--7------4--8---89-----75---1--3------2--6---8-6-71-3--9--8--";
-    };
+    std::string sProgramName(argv[0]);
+    std::string sSubCommand = "";
+    if (argc > 1) {
+        sSubCommand = std::string(argv[1]);
+    }
 
-    if (sData.length() != 81) {
-        std::cout << "The number of characters to be 81!\n\n";
-        return -1; 
-    };
-    
-    sea5kgSudoku sudoku("123456789");
-    sudoku.setData(sData);
-    
-    std::cout << "Source data: " << std::endl << sudoku.printData() << std::endl;
-    sudoku.applyClassicRegionsFor9x9();
-    
-    // while fulfilling performed
-    int nStep = 0;
-    std::cout << "Step " << nStep << ": " << sData << std::endl;
-    while (sudoku.step()) {
-        // nothing
-        std::cout << "Step " << nStep << ": " << sudoku.getOnelineData() << std::endl;
-        nStep++;
-    };
-    
-    // decision may be incomplete (!)
-    std::cout << "Solution:" << std::endl << sudoku.printData() << std::endl;
-    
-    std::cout << sData << std::endl;
-    std::cout << sudoku.getOnelineData() << std::endl;
-    std::cout << "\n";
-    return 0;
+    if (sSubCommand == "list") {
+        std::cout
+            << "List sudoku types:" << std::endl
+            << " - " << sea5kgSudokuType::ST_5x5 << std::endl
+            << " - " << sea5kgSudokuType::ST_6x6 << std::endl
+            << " - " << sea5kgSudokuType::ST_9x9 << std::endl
+            << std::endl;
+        return 0;
+    } else if (sSubCommand == "solve") {
+        if (argc != 5) {
+            printHelp(sProgramName);
+            return -1;
+        }
+        std::string sAlphabet(argv[2]);
+        std::string sSudokuType(argv[3]);
+        std::string sData(argv[4]);
+        
+        sea5kgSudoku sudoku(sAlphabet, sSudokuType);
+        sudoku.setData(sData);
+        std::cout << "Sudoku (input):" << std::endl << sudoku.getPrintableData() << std::endl;
+        sudoku.solve();
+        std::cout << "Sudoku (solved):" << std::endl << sudoku.getPrintableData() << std::endl;
+        std::cout << "Input: " << sData << std::endl;
+        std::cout << "Solved: " << sudoku.getData() << std::endl;
+        return 0;
+    } else if (sSubCommand == "generate") {
+        if (argc != 4) {
+            printHelp(sProgramName);
+            return -1;
+        }
+        std::string sAlphabet(argv[2]);
+        std::string sSudokuType(argv[3]);
+        
+        sea5kgSudoku sudoku(sAlphabet, sSudokuType);
+        if (sudoku.generate(100)) {
+            std::cout << "Sudoku generated:" << std::endl << sudoku.getPrintableData() << std::endl;
+            std::cout << "Data: " << sudoku.getData() << std::endl;
+            return 0;
+        }
+        std::cout << "FAIL: Could not try generate sudoku" << std::endl;
+        return -1;
+    } else if (sSubCommand == "server") {
+        std::cout << "Not implemented yet" << std::endl;
+        return -1;
+    }
+    printHelp(sProgramName);
+    return -1;
 }
 
