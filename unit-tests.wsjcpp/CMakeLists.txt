@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(unit-tests C CXX)
-add_definitions(-DWSJCPP_APP_VERSION="ut-v0.0.2")
+add_definitions(-DWSJCPP_APP_VERSION="ut-v0.0.3")
 add_definitions(-DWSJCPP_APP_NAME="unit-tests-sea5kgSudoku")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -48,7 +48,7 @@ list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_light_web_server/wsjcpp_light_
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_light_web_server/wsjcpp_light_web_server.h")
 list (APPEND WSJCPP_SOURCES "../src.wsjcpp/wsjcpp_light_web_server/wsjcpp_light_web_server.cpp")
 
-# sea5kgSudoku:v0.0.2
+# sea5kgSudoku:v0.0.3
 list (APPEND WSJCPP_INCLUDE_DIRS "../src")
 list (APPEND WSJCPP_SOURCES "../src/sea5kgSudoku.cpp")
 list (APPEND WSJCPP_SOURCES "../src/sea5kgSudoku.h")
