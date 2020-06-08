@@ -1,0 +1,101 @@
+.tabs {
+
+}
+
+.tab-item {
+    display: inline-block;
+    padding: 5px;
+    margin-left: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+    z-index: 100;
+    height: 19px;
+    vertical-align: top;
+}
+
+.tab-item.first {
+    margin-left: 20px;
+}
+
+.tab-item.selected {
+    border-bottom: none;
+    height: 21px;
+    margin-top: 2px;
+}
+
+.tab-container {
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: -2px;
+    margin-bottom: 20px;
+    z-index: 99;
+    position: relative;
+}
+
+.sudoku-cell {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sudoku-cell.selected {
+    background-color: aqua;
+}
+
+.sudoku-cell.top {
+    border-top: 3px solid black;
+}
+
+.sudoku-cell.bottom {
+    border-bottom: 3px solid black;
+}
+
+.sudoku-cell.left {
+    border-left: 3px solid black;
+}
+
+.sudoku-cell.right {
+    border-right: 3px solid black;
+}
+
+.sudoku-cell.top-onegroup {
+    border-top: 1px solid lightgrey;
+}
+
+.sudoku-cell.bottom-onegroup {
+    border-bottom: 1px solid lightgrey;
+}
+
+.sudoku-cell.left-onegroup {
+    border-left: 1px solid lightgrey;
+}
+
+.sudoku-cell.right-onegroup {
+    border-right: 1px solid lightgrey;
+}
+
+.sudoku-variant {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
